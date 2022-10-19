@@ -1,0 +1,5 @@
+classstructure.drawio
+package-lock.json
+node_modules/
+Client/templates/*
+!Client/templates/index.html
