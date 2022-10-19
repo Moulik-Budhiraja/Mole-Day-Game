@@ -94,3 +94,10 @@
     display: flex !important;
 }
 
+.show-on-host {
+    display: none;
+}
+
+.show-on-host.host {
+    display: block;
+}

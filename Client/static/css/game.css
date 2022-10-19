@@ -1,0 +1,19 @@
+* {
+    box-sizing: border-box;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+    width: 100%;
+}
+
+.game-container {
+    background-color: #0f0f0f;
+    width: 70vmin;
+    aspect-ratio: 1;
+}

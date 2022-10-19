@@ -61,6 +61,24 @@ class Game {
             player.socket.emit(name, msg);
         }
     }
+
+    start() {
+        this.state.started = true;
+        this.sendUpdate("countdown-started", {
+            data: {
+                game: this.getObject(),
+            },
+        });
+
+        setTimeout(() => {
+            this.state.start_time = Date.now();
+            this.sendUpdate("game-started", {
+                data: {
+                    game: this.getObject(),
+                },
+            });
+        }, 4000);
+    }
 }
 
 class Player {

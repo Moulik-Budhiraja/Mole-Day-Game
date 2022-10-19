@@ -13,7 +13,7 @@ const lobby = /* html */ `
                         <strong>Max Acid:</strong>
                         <strong>Time Limit:</strong>
                     </p>
-                    <button id="start-game" class="start-game btn btn-success">
+                    <button id="start-game" class="start-game btn btn-success show-on-host">
                         Start Game
                     </button>
                 </div>

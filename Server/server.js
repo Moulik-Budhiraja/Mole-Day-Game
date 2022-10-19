@@ -12,9 +12,8 @@ const io = require("socket.io")(3001, {
 const { Game, Player } = require("./game.js");
 
 io.on("connection", (client) => {
-    console.log("Client connected");
-    console.log(client.id);
     client.emit("init", { data: null });
+    console.log(`Client ${client.id} connected`);
 
     client.on("create-game", (msg) => {
         const game = new Game();
@@ -27,35 +26,7 @@ io.on("connection", (client) => {
             },
         });
 
-        client.on("disconnect", () => {
-            console.log("Client disconnected");
-
-            game.players = game.players.filter((p) => p.id != player.id);
-            delete Player.players[player.id];
-            Player.takenIds = Player.takenIds.filter((id) => id != player.id);
-
-            if (game.players.length == 0) {
-                Game.takenCodes = Game.takenCodes.filter(
-                    (code) => code != game.code
-                );
-
-                delete Game.games[game.code];
-            } else {
-                if (player.host) {
-                    game.players[0].host = true;
-                    game.players[0].socket.emit("host-update", {
-                        data: game.players[0].host,
-                    });
-                }
-
-                game.sendUpdate("player-list-update", {
-                    data: {
-                        game: game.getObject(),
-                    },
-                });
-            }
-            console.log(Game.games);
-        });
+        handleDisconnect(client, game, player);
     });
 
     client.on("join-game", (msg) => {
@@ -74,13 +45,14 @@ io.on("connection", (client) => {
                     game: game.getObject(),
                 },
             });
+
+            handleDisconnect(client, game, player);
         } else {
             client.emit("error", {
                 data: {
                     message: "Game not found",
                 },
             });
-            console.log(Game.games);
         }
     });
 
@@ -102,6 +74,50 @@ io.on("connection", (client) => {
             },
         });
     });
+
+    client.on("start-game", (msg) => {
+        const game = Game.getGame(msg.data.gameCode);
+        const player = Player.getPlayer(msg.data.playerId);
+
+        if (player.host) {
+            game.start();
+        }
+    });
 });
+
+function handleDisconnect(client, game, player) {
+    client.on("disconnect", () => {
+        console.log(`Client ${client.id} disconnected`);
+        game.players = game.players.filter((p) => p.id != player.id);
+        Player.takenIds = Player.takenIds.filter((id) => id != player.id);
+        delete Player.players[player.id];
+
+        if (game.players.length == 0) {
+            Game.takenCodes = Game.takenCodes.filter(
+                (code) => code != game.code
+            );
+
+            delete Game.games[game.code];
+        } else {
+            if (player.host) {
+                game.players[0].host = true;
+                game.players[0].socket.emit("host-update", {
+                    data: {
+                        game: game.getObject(),
+                        playerId: game.players[0].id,
+                    },
+                });
+            }
+
+            game.sendUpdate("player-list-update", {
+                data: {
+                    game: game.getObject(),
+                },
+            });
+        }
+
+        console.log(Game.games);
+    });
+}
 
 io.listen(3000);

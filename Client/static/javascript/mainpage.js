@@ -35,6 +35,10 @@ socket.on("player-list-update", (msg) => {
     updateLobby(msg.data.game.players);
 });
 
+socket.on("host-update", (msg) => {
+    document.querySelector(".show-on-host").classList.add("host");
+});
+
 // Handle Connection to Server
 
 function handleInit(msg) {
@@ -76,6 +80,24 @@ function joinLobby(msg) {
     document
         .querySelector("button#change-name")
         .addEventListener("click", changeName.bind(msg));
+
+    document.querySelector("#start-game").addEventListener("click", () => {
+        if (
+            msg.data.game.players.length > 1 &&
+            getPlayer(msg.data.game, myId).host
+        ) {
+            socket.emit("start-game", {
+                data: {
+                    gameCode: msg.data.game.code,
+                    playerId: myId,
+                },
+            });
+        }
+    });
+
+    if (getPlayer(msg.data.game, myId).host) {
+        document.querySelector(".show-on-host").classList.add("host");
+    }
 
     updateLobby(msg.data.game.players, msg.data.game.rules, msg.data.game.code);
 }
