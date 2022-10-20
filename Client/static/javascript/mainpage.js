@@ -160,3 +160,17 @@ function changeName(e) {
         },
     });
 }
+
+function toggleMole(position) {
+    let mole = document.querySelector(`.${position} .mole-entity`);
+
+    mole.classList.toggle("hidden");
+
+    if (mole.classList.contains("hidden")) {
+        setTimeout(() => {
+            mole.classList.add("invisible");
+        }, 200);
+    } else {
+        mole.classList.remove("invisible");
+    }
+}
