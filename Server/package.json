@@ -1,0 +1,13 @@
+{
+    "name": "mole-game-server",
+    "version": "1.0.0",
+    "description": "Server for mole game",
+    "author": "Moulik Budhiraja <moulikbudhiraja@gmail.com>",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js"
+    },
+    "dependencies": {
+        "socket.io": "^4.5.3"
+    }
+}
