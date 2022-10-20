@@ -1,5 +1,7 @@
 const serverUrl = "https://moledaygameservers.budhiraja.ca:443";
-var socket = io(serverUrl);
+var socket = io(serverUrl, {
+    withCredentials: true,
+});
 
 // Variable Definitions
 
@@ -70,8 +72,7 @@ document.querySelector("#create-game").addEventListener("click", () => {
 function joinLobby(msg) {
     myId = msg.data.playerId;
     document.querySelector(".wrapper").innerHTML = lobby;
-    document.querySelector("#styling").href =
-        "http://localhost:5000/static/css/lobby.css";
+    document.querySelector("#styling").href = "/static/css/lobby.css";
 
     document
         .querySelector("button#set-name")
