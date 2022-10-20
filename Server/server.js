@@ -1,7 +1,7 @@
 // server-side
 const io = require("socket.io")(3001, {
     cors: {
-        origin: "http://localhost:5000",
+        origin: "https://moleday.budhiraja.ca:443",
         methods: ["GET", "POST"],
         credentials: true,
         allowEIO3: true,
@@ -120,4 +120,4 @@ function handleDisconnect(client, game, player) {
     });
 }
 
-io.listen(3000);
+io.listen(7453);
