@@ -1,0 +1,103 @@
+* {
+    box-sizing: border-box;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    width: 100%;
+}
+
+
+.title  {
+    margin-top: 1rem;
+}
+
+.dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    width: 100%;
+    padding: 3rem;
+}
+
+.player-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+}
+
+.player-list ul {
+    width: 100%;
+    margin-top: 1rem;
+    overflow: scroll;
+    height: 50vh;
+}
+
+#game-code {
+    text-align: center;
+}
+
+.game-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    height: 60vh;
+}
+
+.game-settings {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.game-info :last-child {
+    margin-top: auto;
+}
+
+.name-settings {
+    text-align: center;
+}
+
+.name-settings div {
+    display: flex;
+    gap: 0.5rem;
+    flex-direction: column;
+    align-items: center;
+    height: 50vh;
+    justify-content: center;
+}
+
+.name-settings div button {
+    width: 30%;
+}
+
+
+.name-settings div input {
+    width: 60%;
+}
+
+.set-name.confirmed {
+    display: none !important;
+}
+
+.change-name  {
+    display: none !important;
+}
+
+.change-name.confirmed {
+    display: flex !important;
+}
+
+.show-on-host {
+    display: none;
+}
+
+.show-on-host.host {
+    display: block;
+}

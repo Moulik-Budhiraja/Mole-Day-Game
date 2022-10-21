@@ -1,13 +1,13 @@
 // server-side
-const io = require("socket.io")(3001, {
-    cors: {
-        origin: "https://moleday.budhiraja.ca:443",
-        methods: ["GET", "POST"],
-        credentials: true,
-        allowEIO3: true,
-        "Access-Control-Allow-Origin": "*",
-    },
-});
+
+const express = require("express");
+
+const app = express();
+const server = require("http").createServer(app);
+const io = require("socket.io")(server);
+
+app.set("view engine", "ejs");
+app.use(express.static("public"));
 
 const { Game, Player } = require("./game.js");
 
@@ -120,4 +120,6 @@ function handleDisconnect(client, game, player) {
     });
 }
 
-io.listen(7453);
+server.listen(3000, () => {
+    console.log("listening on *:3000");
+});
