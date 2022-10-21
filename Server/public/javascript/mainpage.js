@@ -1,4 +1,4 @@
-const serverUrl = "http://localhost:3000";
+const serverUrl = "https://moleday.budhiraja.ca:443";
 var socket = io(serverUrl, {
     withCredentials: true,
 });
