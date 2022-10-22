@@ -10,12 +10,12 @@ class Game {
 
     constructor() {
         this.code = this.generateCode();
-        this.players = [];
         Game.games[this.code] = this;
         this.rules = {
             maxLives: 3,
             maxAcid: 5,
             maxTime: 180,
+            startDelay: 8,
         };
         this.state = {
             started: false,
@@ -23,6 +23,7 @@ class Game {
             finished: false,
             winner: null,
         };
+        this.players = [];
     }
 
     generateCode() {
@@ -63,21 +64,29 @@ class Game {
     }
 
     start() {
-        this.state.started = true;
-        this.sendUpdate("countdown-started", {
+        this.sendUpdate("load-game", {
             data: {
                 game: this.getObject(),
             },
         });
 
         setTimeout(() => {
+            this.sendUpdate("start-countdown", {
+                data: {
+                    game: this.getObject(),
+                },
+            });
+        }, 1000);
+
+        setTimeout(() => {
+            this.state.started = true;
             this.state.start_time = Date.now();
             this.sendUpdate("game-started", {
                 data: {
                     game: this.getObject(),
                 },
             });
-        }, 4000);
+        }, 1000 + this.rules.startDelay * 1000);
     }
 }
 
@@ -100,12 +109,12 @@ class Player {
         game.players.push(this);
         Player.players[this.id] = this;
 
-        this.lives = 3;
-        this.acid = 5;
+        this.lives = game.rules.maxLives;
+        this.acid = game.rules.maxAcid;
 
         this.hidden = true;
 
-        this.points = 0;
+        this.score = 0;
         this.placement = null;
     }
 
@@ -131,7 +140,7 @@ class Player {
             lives: this.lives,
             acid: this.acid,
             hidden: this.hidden,
-            points: this.points,
+            score: this.score,
             placement: this.placement,
         };
     }

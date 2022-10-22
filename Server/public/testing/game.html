@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+            crossorigin="anonymous"
+        />
+        <link rel="stylesheet" href="/css/game.css" />
+        <title>Mole Day Game - Moulik</title>
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="game-container">
+                <div class="background">
+                    <img src="/media/game-sky.svg" class="game-sky" />
+                    <img src="/media/game-ground.svg" class="game-ground" />
+                    <img
+                        src="/media/game-burrow-backs.svg"
+                        class="game-burrow-backs"
+                    />
+                </div>
+                <div class="moles">
+                    <div class="top-left mole-container">
+                        <div class="mole-entity">
+                            <h6>Testing</h6>
+                            <img src="/media/game-mole.svg" class="game-mole" />
+                        </div>
+                        <img
+                            src="/media/game-ground-top-left.svg"
+                            class="game-ground-cover"
+                        />
+                    </div>
+                    <div class="top-right mole-container">
+                        <div class="mole-entity">
+                            <h6>Another Name</h6>
+                            <img src="/media/game-mole.svg" class="game-mole" />
+                        </div>
+                        <img
+                            src="/media/game-ground-top-right.svg"
+                            class="game-ground-cover"
+                        />
+                    </div>
+                    <div class="bottom-left mole-container">
+                        <div class="mole-entity">
+                            <h6>Bottom Left</h6>
+                            <img src="/media/game-mole.svg" class="game-mole" />
+                        </div>
+                        <img
+                            src="/media/game-ground-bottom-left.svg"
+                            class="game-ground-cover"
+                        />
+                    </div>
+                    <div class="middle mole-container">
+                        <div class="mole-entity">
+                            <h6>Middle Man</h6>
+                            <img src="/media/game-mole.svg" class="game-mole" />
+                        </div>
+                        <img
+                            src="/media/game-ground-middle.svg"
+                            class="game-ground-cover"
+                        />
+                    </div>
+                    <div class="bottom-right mole-container">
+                        <div class="mole-entity">
+                            <h6>Bottom Right</h6>
+                            <img src="/media/game-mole.svg" class="game-mole" />
+                        </div>
+                        <img
+                            src="/media/game-ground-middle.svg"
+                            class="game-ground-cover"
+                        />
+                    </div>
+                </div>
+                <div class="foreground">
+                    <img
+                        src="/media/game-burrow-fronts.svg"
+                        class="game-burrow-fronts"
+                    />
+                </div>
+            </div>
+            <div class="hud">
+                <div class="left">
+                    <div class="timer">
+                        <img src="/media/game-clock.svg" class="icon" />
+                        <h1 id="time-left">2:56</h1>
+                    </div>
+                    <div class="health">
+                        <div class="progress"></div>
+                        <img src="/media/game-heart.svg" class="icon" />
+                    </div>
+                    <div class="mole-position">
+                        <img
+                            src="/media/game-personal-burrow-back.svg"
+                            class="background"
+                        />
+                        <div class="personal-mole-entity">
+                            <h6>My Name</h6>
+                            <img
+                                src="/media/game-mole.svg"
+                                class="personal-mole"
+                            />
+                        </div>
+
+                        <div class="mole-cover"></div>
+                        <img
+                            src="/media/game-personal-burrow-front.svg"
+                            class="foreground"
+                        />
+                    </div>
+                </div>
+                <div class="right">
+                    <div class="players-left">
+                        <img src="/media/game-players.svg" class="icon" />
+                        <h1 id="players-left">3</h1>
+                    </div>
+                    <div class="score">
+                        <img src="/media/game-target.svg" class="icon" />
+                        <h1 id="score">0</h1>
+                    </div>
+                    <div class="ammo">
+                        <div class="progress"></div>
+                        <img src="/media/game-potion.svg" class="icon" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+            crossorigin="anonymous"
+        ></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.3/socket.io.js"
+            integrity="sha512-iWPnCISAd/J+ZacwV2mbNLCaPGRrRo5OS81lKTVPtRg1wGTC20Cfmp5Us5RcbLv42QLdbAWl0MI57yox5VecQg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        ></script>
+    </body>
+</html>

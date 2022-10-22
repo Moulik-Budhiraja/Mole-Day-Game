@@ -19,7 +19,7 @@ io.on("connection", (client) => {
         const game = new Game();
         const player = new Player("Player", client, game);
         player.host = true;
-        client.emit("game-joined", {
+        client.emit("lobby-joined", {
             data: {
                 game: game.getObject(),
                 playerId: player.id,
@@ -33,7 +33,7 @@ io.on("connection", (client) => {
         const game = Game.getGame(msg.data.gameCode);
         if (game) {
             const player = new Player("Player", client, game);
-            client.emit("game-joined", {
+            client.emit("lobby-joined", {
                 data: {
                     game: game.getObject(),
                     playerId: player.id,

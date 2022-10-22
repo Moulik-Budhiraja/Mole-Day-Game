@@ -72,9 +72,10 @@ body {
     width: 11%;
     height: fit-content;
     transition: top 0.2s ease-in-out;
+
 }
 
-.mole-entity h5 {
+.mole-entity h6, .personal-mole-entity h6 {
     text-align: center;
     position: absolute;
     white-space: nowrap;
@@ -83,7 +84,17 @@ body {
     z-index: 1;
     color: #fff;
     text-shadow: 1px 1px 5px #000;
+    cursor: default;
+    
+    /* Cursor Stuff*/
+    -webkit-touch-callout: none; 
+    -webkit-user-select: none;
+    -khtml-user-select: none; 
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
+
 
 .top-left .mole-entity {
     top: 48%;
@@ -114,4 +125,210 @@ body {
 
 .mole-entity.invisible {
     visibility: hidden;
+}
+
+.middle .mole-entity {
+    top: 60%;
+    left: 45%;
+}
+
+.middle .mole-entity.hidden {
+    top: 73%;
+}
+
+.bottom-right .mole-entity {
+    top: 75%;
+    left: 71%;
+}
+
+.bottom-right .mole-entity.hidden {
+    top: 73%;
+}
+
+.hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+}
+
+.hud .left {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(35vmin / 7 * 10);
+    height: 100%;
+    /* background-color: rgba(0,0,0,0.2); */
+}
+
+.hud .right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: calc(35vmin / 7 * 10);
+    height: 100%;
+    /* background-color: rgba(0,0,0,0.2); */
+}
+
+.health, .ammo {
+    height: 70vh;
+    width: 30px;
+    background-color: rgb(99, 99, 99);
+    border-radius: 99999px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-55%);
+}
+
+.health {
+    right: 10px;
+}
+
+.ammo {
+    left: 10px;
+}
+
+/* filled state of each */
+
+.health .progress, .ammo .progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 66%;
+    border-radius: 99999px;
+    transition: height 0.8s cubic-bezier(.36,1.03,.65,.95);
+}
+
+.health .progress {
+    background-color: #ff1d25;
+}
+
+.ammo .progress {
+    background-color: #00bc46;
+}
+
+.health .icon {
+    position: absolute;
+    width: 150%;
+    bottom: -15%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.ammo .icon {
+    position: absolute;
+    width: 175%;
+    bottom: -15%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.mole-position {
+    position: absolute;
+    bottom: 8%;
+    left: 10%;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+} 
+
+.mole-position .personal-mole-entity {
+    position: relative;
+    bottom: 25px;
+    width:55%;
+    transition: bottom 0.2s ease-in-out;
+}
+
+.personal-mole-entity.hidden {
+    bottom: -32px;
+}
+
+.personal-mole-entity h6 {
+    color: #000;
+    text-shadow: 1px 1px 5px #fff;
+}
+
+
+.mole-position .personal-mole.hidden {
+    bottom: -15px;
+}
+
+.mole-position .background {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+.mole-position .mole-cover {
+    background-color: #dcf6ff;
+    position:absolute;
+    bottom: -50%;
+    height: 67%;
+    width: 100%;
+    left: 0;
+}
+
+.mole-position .foreground {
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+}
+
+.timer {
+    position: absolute;
+    top: 12%;
+    left: 5%;
+    width: 60%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    gap: 1rem;
+}
+
+.timer .icon {
+    height: 100%;
+}
+
+.players-left {
+    position: absolute;
+    top: 12%;
+    right: 5%;
+    width: 60%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    gap: 1rem;
+}
+
+.players-left .icon {
+    height: 100%;
+}
+
+.score {
+    position: absolute;
+    bottom: 12%;
+    right: 5%;
+    width: 60%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    gap: 1rem;
+}
+
+.score .icon {
+    height: 100%;
 }
