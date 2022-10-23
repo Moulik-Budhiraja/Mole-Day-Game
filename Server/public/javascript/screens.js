@@ -129,8 +129,10 @@ const gameScreen = /* html */ `
             <img src="/media/game-clock.svg" class="icon" />
             <h1 id="time-left">2:56</h1>
         </div>
-        <div class="health">
-            <div id="health-amount" class="progress"></div>
+        <div class="health-wrapper">
+            <div class="health">
+                <div id="health-amount" class="progress"></div>
+            </div>
             <img src="/media/game-heart.svg" class="icon" />
         </div>
         <div class="mole-position">
@@ -162,8 +164,11 @@ const gameScreen = /* html */ `
             <img src="/media/game-target.svg" class="icon" />
             <h1 id="score">0</h1>
         </div>
-        <div class="ammo">
-            <div class="progress" id="acid-amount"></div>
+        <div class="ammo-wrapper">
+            <div class="ammo">
+                <div class="progress" id="acid-amount"></div>
+                
+            </div>
             <img src="/media/game-potion.svg" class="icon" />
         </div>
     </div>

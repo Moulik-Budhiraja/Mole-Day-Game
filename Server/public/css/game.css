@@ -191,7 +191,7 @@ body {
     /* background-color: rgba(0,0,0,0.2); */
 }
 
-.health, .ammo {
+.health-wrapper, .ammo-wrapper {
     height: 70vh;
     width: 30px;
     background-color: rgb(99, 99, 99);
@@ -199,15 +199,19 @@ body {
     position: absolute;
     top: 50%;
     transform: translateY(-55%);
-    overflow: hidden;
+
 }
 
-.health {
+.health-wrapper {
     right: 10px;
 }
 
-.ammo {
+.ammo-wrapper {
     left: 10px;
+}
+
+.health, .ammo {
+    overflow: hidden;
 }
 
 /* filled state of each */
@@ -230,7 +234,7 @@ body {
     background-color: #00bc46;
 }
 
-.health .icon {
+.health-wrapper .icon {
     position: absolute;
     width: 150%;
     bottom: -15%;
@@ -238,13 +242,14 @@ body {
     transform: translateX(-50%);
 }
 
-.ammo .icon {
+.ammo-wrapper .icon {
     position: absolute;
     width: 175%;
     bottom: -15%;
     left: 50%;
     transform: translateX(-50%);
 }
+
 
 .mole-position {
     position: absolute;
