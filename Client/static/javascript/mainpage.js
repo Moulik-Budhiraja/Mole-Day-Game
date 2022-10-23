@@ -1,4 +1,4 @@
-const serverUrl = "https://moledaygameservers.budhiraja.ca:443";
+const serverUrl = "http://localhost:3000";
 var socket = io(serverUrl, {
     withCredentials: true,
 });

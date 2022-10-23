@@ -67,7 +67,7 @@ const gameScreen = /* html */ `
     <div class="moles">
         <div class="top-left mole-container">
             <div class="mole-entity">
-                <h6>Testing</h6>
+                <h6 class="mole-name">Testing</h6>
                 <img src="/media/game-mole.svg" class="game-mole" />
             </div>
             <img
@@ -77,7 +77,7 @@ const gameScreen = /* html */ `
         </div>
         <div class="top-right mole-container">
             <div class="mole-entity">
-                <h6>Another Name</h6>
+                <h6 class="mole-name">Another Name</h6>
                 <img src="/media/game-mole.svg" class="game-mole" />
             </div>
             <img
@@ -87,7 +87,7 @@ const gameScreen = /* html */ `
         </div>
         <div class="bottom-left mole-container">
             <div class="mole-entity">
-                <h6>Bottom Left</h6>
+                <h6 class="mole-name">Bottom Left</h6>
                 <img src="/media/game-mole.svg" class="game-mole" />
             </div>
             <img
@@ -97,7 +97,7 @@ const gameScreen = /* html */ `
         </div>
         <div class="middle mole-container">
             <div class="mole-entity">
-                <h6>Middle Man</h6>
+                <h6 class="mole-name">Middle Man</h6>
                 <img src="/media/game-mole.svg" class="game-mole" />
             </div>
             <img
@@ -107,7 +107,7 @@ const gameScreen = /* html */ `
         </div>
         <div class="bottom-right mole-container">
             <div class="mole-entity">
-                <h6>Bottom Right</h6>
+                <h6 class="mole-name">Bottom Right</h6>
                 <img src="/media/game-mole.svg" class="game-mole" />
             </div>
             <img

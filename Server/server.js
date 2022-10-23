@@ -13,7 +13,6 @@ const { Game, Player } = require("./game.js");
 
 io.on("connection", (client) => {
     client.emit("init", { data: null });
-    console.log(`Client ${client.id} connected`);
 
     client.on("create-game", (msg) => {
         const game = new Game();
@@ -87,7 +86,6 @@ io.on("connection", (client) => {
 
 function handleDisconnect(client, game, player) {
     client.on("disconnect", () => {
-        console.log(`Client ${client.id} disconnected`);
         game.players = game.players.filter((p) => p.id != player.id);
         Player.takenIds = Player.takenIds.filter((id) => id != player.id);
         delete Player.players[player.id];
@@ -115,8 +113,6 @@ function handleDisconnect(client, game, player) {
                 },
             });
         }
-
-        console.log(Game.games);
     });
 }
 

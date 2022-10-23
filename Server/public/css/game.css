@@ -25,6 +25,14 @@ body {
     position: relative;
 }
 
+.game-container * {
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+	-webkit-user-drag: none;
+	-webkit-app-region: no-drag;
+}
+
 .game-container img {
     position: absolute;
 
@@ -48,6 +56,7 @@ body {
     left: 50%;
     transform: translateX(-50%);
     bottom: 25px;
+    pointer-events: none;
 }
 
 .moles {
@@ -59,6 +68,16 @@ body {
     height: 100%;
     position: absolute;
     bottom: 0;
+    pointer-events: none;
+}
+
+.mole-container .game-mole {
+    pointer-events: auto;
+
+}
+
+.game-ground-cover {
+    pointer-events: none;
 }
 
 .mole-container .game-ground-cover {
@@ -142,7 +161,7 @@ body {
 }
 
 .bottom-right .mole-entity.hidden {
-    top: 73%;
+    top: 83%;
 }
 
 .hud {
@@ -151,7 +170,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-
+    pointer-events: none;
 }
 
 .hud .left {
@@ -180,6 +199,7 @@ body {
     position: absolute;
     top: 50%;
     transform: translateY(-55%);
+    overflow: hidden;
 }
 
 .health {
@@ -331,4 +351,24 @@ body {
 
 .score .icon {
     height: 100%;
+}
+
+.acid {
+    width: 100%;
+    height: 100%;
+}
+
+.acid-wrapper {
+    opacity: 1;
+    transition: opacity .8s cubic-bezier(1,.04,.88,.96);
+    z-index: 10;
+    height: 15%;
+    aspect-ratio: 1;
+    position: absolute;
+
+    transform: translate(-50%, -50%);
+}
+
+.acid-wrapper.fade-acid {
+    opacity: 0;
 }

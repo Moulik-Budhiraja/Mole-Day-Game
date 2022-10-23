@@ -15,7 +15,7 @@ class Game {
             maxLives: 3,
             maxAcid: 5,
             maxTime: 180,
-            startDelay: 8,
+            startDelay: 0,
         };
         this.state = {
             started: false,
@@ -86,7 +86,69 @@ class Game {
                     game: this.getObject(),
                 },
             });
+            this.registerGameEvents();
+
+            this.updateVisiblePlayers();
         }, 1000 + this.rules.startDelay * 1000);
+    }
+
+    registerGameEvents() {
+        for (let player of this.players) {
+            player.registerEvents();
+        }
+    }
+
+    getAlivePlayers() {
+        let alive = [];
+
+        for (let player of this.players) {
+            if (player.lives > 0) {
+                alive.push(player);
+            }
+        }
+
+        return alive;
+    }
+
+    getVisiblePlayers(exclude = null) {
+        let players = [];
+
+        for (let player of this.getAlivePlayers()) {
+            if (player.id != exclude) {
+                players.push(player.getObject());
+            }
+        }
+
+        return players;
+    }
+
+    getSetVisiblePlayers(exclude = null) {
+        // Return a random set of upto 4 players that are visible
+
+        let players = this.getVisiblePlayers(exclude);
+
+        let maxSetSize = Math.floor(Math.random() * 4) + 1;
+        let set = [];
+
+        while (set.length < 5 && players.length > 0) {
+            let index = Math.floor(Math.random() * players.length);
+            set.push(players[index]);
+            players.splice(index, 1);
+        }
+
+        return set;
+    }
+
+    updateVisiblePlayers() {
+        for (let player of this.players) {
+            player.socket.emit("player-visible-update", {
+                data: {
+                    game: this.getObject(),
+                    playerId: player.id,
+                    visiblePlayers: this.getSetVisiblePlayers(player.id),
+                },
+            });
+        }
     }
 }
 
@@ -101,6 +163,7 @@ class Player {
     constructor(name, socket, game) {
         this.name = name;
         this.socket = socket;
+        this.game = game;
 
         this.id = this.generateId();
 
@@ -112,7 +175,7 @@ class Player {
         this.lives = game.rules.maxLives;
         this.acid = game.rules.maxAcid;
 
-        this.hidden = true;
+        this.hidden = false;
 
         this.score = 0;
         this.placement = null;
@@ -143,6 +206,52 @@ class Player {
             score: this.score,
             placement: this.placement,
         };
+    }
+
+    hit() {
+        this.lives -= 1;
+        if (this.lives <= 0) {
+            this.hidden = true;
+
+            this.game.updateVisiblePlayers();
+        }
+
+        this.updateAttributes();
+    }
+
+    updateAttributes() {
+        this.socket.emit("player-update", {
+            data: {
+                game: this.game.getObject(),
+                playerId: this.id,
+                player: this.getObject(),
+            },
+        });
+    }
+
+    registerEvents() {
+        this.socket.on("hide", (msg) => {
+            this.hidden = true;
+            this.game.updateVisiblePlayers();
+        });
+
+        this.socket.on("show", (msg) => {
+            this.hidden = false;
+            this.game.updateVisiblePlayers();
+        });
+
+        this.socket.on("attack", (msg) => {
+            this.acid -= 1;
+
+            if (msg.data.hit) {
+                this.score += 1;
+
+                let player = Player.getPlayer(msg.data.hit);
+                // player.hit();
+            }
+
+            this.updateAttributes();
+        });
     }
 }
 
