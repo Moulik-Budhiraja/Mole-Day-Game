@@ -167,10 +167,28 @@ const gameScreen = /* html */ `
         <div class="ammo-wrapper">
             <div class="ammo">
                 <div class="progress" id="acid-amount"></div>
-                
             </div>
             <img src="/media/game-potion.svg" class="icon" />
         </div>
+        <div class="leaderboard">
+            <ol>
+                <!--<li>
+                    <span class="player-name">Moulik</span
+                    ><span class="player-score">6</span>
+                </li>
+                -->
+            </ol>
+        </div>
     </div>
+</div>
+<div class="hud-cover">
+    <div class="eliminated">
+        <h1>Eliminated</h1>
+        <h3>Waiting for Game to End</h3>
+    </div>
+</div>
+<div class="game-over-hud">
+    <h1>Game Over</h1>
+    <h3>Leaderboard</h3>
 </div>
 `;

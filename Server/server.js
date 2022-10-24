@@ -90,6 +90,10 @@ function handleDisconnect(client, game, player) {
         Player.takenIds = Player.takenIds.filter((id) => id != player.id);
         delete Player.players[player.id];
 
+        if (game.state.started) {
+            game.updateVisiblePlayers();
+        }
+
         if (game.players.length == 0) {
             Game.takenCodes = Game.takenCodes.filter(
                 (code) => code != game.code

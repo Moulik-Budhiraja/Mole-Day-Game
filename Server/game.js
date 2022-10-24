@@ -14,7 +14,7 @@ class Game {
         this.rules = {
             maxLives: 3,
             maxAcid: 5,
-            maxTime: 180,
+            maxTime: 120,
             startDelay: 0,
         };
         this.state = {
@@ -24,6 +24,9 @@ class Game {
             winner: null,
         };
         this.players = [];
+        this.visiblePlayersId = null;
+
+        this.gameOverId = null;
     }
 
     generateCode() {
@@ -89,6 +92,11 @@ class Game {
             this.registerGameEvents();
 
             this.updateVisiblePlayers();
+            this.updateLeaderboard();
+
+            this.gameOverId = setInterval(() => {
+                this.updateGameOver();
+            }, this.rules.maxTime * 1000);
         }, 1000 + this.rules.startDelay * 1000);
     }
 
@@ -96,6 +104,10 @@ class Game {
         for (let player of this.players) {
             player.registerEvents();
         }
+
+        this.visiblePlayersId = setInterval(() => {
+            this.updateVisiblePlayers();
+        }, 5000);
     }
 
     getAlivePlayers() {
@@ -114,7 +126,7 @@ class Game {
         let players = [];
 
         for (let player of this.getAlivePlayers()) {
-            if (player.id != exclude) {
+            if (player.id != exclude && !player.hidden) {
                 players.push(player.getObject());
             }
         }
@@ -130,7 +142,7 @@ class Game {
         let maxSetSize = Math.floor(Math.random() * 4) + 1;
         let set = [];
 
-        while (set.length < 5 && players.length > 0) {
+        while (set.length < maxSetSize && players.length > 0) {
             let index = Math.floor(Math.random() * players.length);
             set.push(players[index]);
             players.splice(index, 1);
@@ -140,15 +152,72 @@ class Game {
     }
 
     updateVisiblePlayers() {
+        if (this.getAlivePlayers().length <= 1) {
+            this.updateGameOver();
+            clearInterval(this.visiblePlayersId);
+            return;
+        }
+
         for (let player of this.players) {
             player.socket.emit("player-visible-update", {
                 data: {
                     game: this.getObject(),
                     playerId: player.id,
                     visiblePlayers: this.getSetVisiblePlayers(player.id),
+                    playersAlive: this.getAlivePlayers().length,
                 },
             });
         }
+    }
+
+    updateLeaderboard() {
+        // Set placements for players
+        let players = this.players;
+        players.sort((a, b) => {
+            return b.score - a.score;
+        });
+
+        for (let i = 0; i < players.length; i++) {
+            players[i].placement = i + 1;
+        }
+
+        // List of upto top 5 players
+        let leaderboard = [];
+
+        for (let i = 0; i < 5 && i < players.length; i++) {
+            leaderboard.push(players[i].getObject());
+        }
+
+        // Send leaderboard update
+        this.sendUpdate("leaderboard-update", {
+            data: {
+                game: this.getObject(),
+                leaderboard: leaderboard,
+            },
+        });
+    }
+
+    updateGameOver() {
+        // Get Leaderboard
+        let players = this.players;
+
+        players.sort((a, b) => {
+            return b.score - a.score;
+        });
+
+        // Create Object with playerIds and scores
+        let placements = {};
+        for (let i = 0; i < players.length; i++) {
+            placements[players[i].id] = players[i].score;
+        }
+
+        // Send Game Over
+        this.sendUpdate("game-over", {
+            data: {
+                game: this.getObject(),
+                placements: placements,
+            },
+        });
     }
 }
 
@@ -174,6 +243,9 @@ class Player {
 
         this.lives = game.rules.maxLives;
         this.acid = game.rules.maxAcid;
+
+        this.livesRegenId = null;
+        this.acidRegenId = null;
 
         this.hidden = false;
 
@@ -214,9 +286,26 @@ class Player {
             this.hidden = true;
 
             this.game.updateVisiblePlayers();
+            this.dead();
         }
 
         this.updateAttributes();
+    }
+
+    dead() {
+        clearInterval(this.livesRegenId);
+        clearInterval(this.acidRegenId);
+
+        this.socket.emit("player-dead", {
+            data: {
+                game: this.game.getObject(),
+                playerId: this.id,
+            },
+        });
+
+        this.lives = 0;
+
+        this.game.updateVisiblePlayers();
     }
 
     updateAttributes() {
@@ -246,12 +335,56 @@ class Player {
             if (msg.data.hit) {
                 this.score += 1;
 
+                console.log(msg.data.hit);
+
                 let player = Player.getPlayer(msg.data.hit);
-                // player.hit();
+                player.hit();
+
+                this.lives += 0.5;
+
+                if (this.lives > this.game.rules.maxLives) {
+                    this.lives = this.game.rules.maxLives;
+                }
+
+                this.game.updateLeaderboard();
             }
 
             this.updateAttributes();
         });
+
+        // Set intervals for stuff
+
+        this.acidRegenId = setInterval(() => {
+            if (this.acid < this.game.rules.maxAcid) {
+                if (this.hidden) {
+                    this.acid += 0.05;
+                } else {
+                    this.acid += 0.25;
+                }
+
+                if (this.acid > this.game.rules.maxAcid) {
+                    this.acid = this.game.rules.maxAcid;
+                }
+
+                this.updateAttributes();
+            }
+        }, 500);
+
+        this.livesRegenId = setInterval(() => {
+            if (this.lives < this.game.rules.maxLives) {
+                if (this.hidden) {
+                    this.lives += 0.01;
+                } else {
+                    this.lives += 0.025;
+                }
+
+                if (this.lives > this.game.rules.maxLives) {
+                    this.lives = this.game.rules.maxLives;
+                }
+
+                this.updateAttributes();
+            }
+        }, 1000);
     }
 }
 

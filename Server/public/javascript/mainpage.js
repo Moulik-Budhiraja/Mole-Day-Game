@@ -64,10 +64,9 @@ socket.on("game-started", (msg) => {
 
 socket.on("player-visible-update", (msg) => {
     for (let player of msg.data.visiblePlayers) {
-        if (!Mole.moles.some((mole) => mole.id == player.id)) {
+        if (!Mole.moles.some((mole) => mole.playerId == player.id)) {
             let mole = new Mole(player.id, msg.data.game);
             mole.startMoving(750);
-            console.log("Started Moving");
         }
     }
 
@@ -80,6 +79,20 @@ socket.on("player-visible-update", (msg) => {
             mole.remove();
         }
     }
+
+    updateGame({
+        gameRules: msg.data.game.rules,
+        playersAlive: msg.data.playersAlive,
+    });
+});
+
+socket.on("player-update", (msg) => {
+    updateGame({
+        gameRules: msg.data.game.rules,
+        score: msg.data.player.score,
+        lives: msg.data.player.lives,
+        acid: msg.data.player.acid,
+    });
 });
 
 // Utility functions
@@ -90,6 +103,76 @@ function getPlayer(game, playerId) {
         }
     }
 }
+
+socket.on("player-dead", (msg) => {
+    myMole.hide();
+    updateGame({
+        gameRules: msg.data.game.rules,
+        score: getPlayer(msg.data.game, msg.data.playerId).score,
+        lives: 0,
+        acid: 0,
+    });
+
+    [
+        "hud-cover",
+        "game-container",
+        "timer",
+        "score",
+        "players-left",
+        "mole-position",
+        "leaderboard",
+    ].forEach((c) => {
+        document.querySelector(`.${c}`).classList.add("dead");
+    });
+});
+
+socket.on("leaderboard-update", (msg) => {
+    console.log("Leaderboard Update");
+    let leaderboard = document.querySelector(".leaderboard ol");
+
+    leaderboard.innerHTML = "";
+
+    for (let player of msg.data.leaderboard) {
+        let li = document.createElement("li");
+        li.innerHTML = `<span class="player-name">${player.name}</span><span class="player-score">${player.score}</span>`;
+        leaderboard.appendChild(li);
+    }
+
+    console.log(msg.data.leaderboard);
+});
+
+socket.on("game-over", (msg) => {
+    console.log("Game Over");
+
+    updateGame({
+        gameRules: msg.data.game.rules,
+        lives: 0,
+        acid: 0,
+    });
+
+    updateGame({
+        gameRules: msg.data.game.rules,
+        acid: 0,
+    });
+
+    // Remove all moles
+    for (let mole of Mole.moles) {
+        mole.remove();
+    }
+
+    // Remove Eliminated Screen
+    document.querySelectorAll(".dead").forEach((c) => {
+        c.classList.remove("dead");
+    });
+
+    document.querySelector(".mole-position").classList.add("dead");
+
+    ["timer", "score", "players-left", "leaderboard", "game-over-hud"].forEach(
+        (c) => {
+            document.querySelector(`.${c}`).classList.add("game-over");
+        }
+    );
+});
 
 // Handle Init
 function handleInit(msg) {}
@@ -218,6 +301,11 @@ function loadGame(msg) {
     document.querySelector(".wrapper").innerHTML = gameScreen;
     document.querySelector("#styling").href = "/css/game.css";
 
+    myMole = new PersonalMole(myId, msg.data.game, socket);
+
+    myMole.lives = getPlayer(msg.data.game, myId).lives;
+    myMole.acid = getPlayer(msg.data.game, myId).acid;
+
     updateGame({
         gameRules: msg.data.game.rules,
         timeLeft: msg.data.game.rules.startDelay,
@@ -235,6 +323,13 @@ function loadGame(msg) {
     for (let [position, mole] of Object.entries(Mole.molePositions)) {
         Mole.toggleMole(position, true);
     }
+
+    // Set name on personal mole
+
+    document.querySelector(".personal-mole-entity h6").innerHTML = getPlayer(
+        msg.data.game,
+        myId
+    ).name;
 }
 
 function updateGame(gameData) {
@@ -257,35 +352,47 @@ function updateGame(gameData) {
     }
     */
 
-    if (gameData.score) {
+    if (gameData.score != undefined) {
         document.querySelector("#score").innerHTML = gameData.score;
     }
 
-    if (gameData.playersAlive) {
+    if (gameData.playersAlive !== undefined) {
         document.querySelector("#players-left").innerHTML =
             gameData.playersAlive;
     }
 
-    if (gameData.timeLeft) {
-        if (gameData.timeLeft === 0) {
-            document.querySelector("#time-left").innerHTML = "0:00";
+    if (gameData.timeLeft !== undefined) {
+        document.querySelector("#time-left").innerHTML = `${Math.floor(
+            gameData.timeLeft / 60
+        )}:${("0" + Math.floor(gameData.timeLeft % 60)).slice(-2)}`;
+
+        if (gameData.timeLeft <= 60) {
+            document.querySelector("#time-left").style.color = "red";
+            myMole.forceShow();
         } else {
-            document.querySelector("#time-left").innerHTML = `${Math.floor(
-                gameData.timeLeft / 60
-            )}:${("0" + Math.floor(gameData.timeLeft % 60)).slice(-2)}`;
+            document.querySelector("#time-left").style.color = "black";
+            myMole.forcedShow = false;
         }
     }
 
-    if (gameData.lives) {
+    if (gameData.lives !== undefined) {
         document.querySelector("#health-amount").style.height = `
             ${(gameData.lives / gameData.gameRules.maxLives) * 100}%
         `;
+
+        myMole.lives = gameData.lives;
     }
 
-    if (gameData.acid) {
+    if (gameData.acid !== undefined) {
+        if (myMole.lives <= 0) {
+            gameData.acid = 0;
+        }
+
         document.querySelector("#acid-amount").style.height = `
             ${(gameData.acid / gameData.gameRules.maxAcid) * 100}%
         `;
+
+        myMole.acid = gameData.acid;
     }
 }
 
@@ -301,8 +408,6 @@ function startGame(msg) {
         });
     }, 1000);
 
-    myMole = new PersonalMole(myId, msg.data.game, socket);
-
     document.addEventListener("keydown", (e) => {
         if (e.key === " ") {
             myMole.toggle();
@@ -310,6 +415,10 @@ function startGame(msg) {
     });
 
     document.addEventListener("click", (e) => {
+        if (myMole.acid < 1) {
+            return;
+        }
+
         if (myMole.hidden) {
             return;
         }
@@ -317,19 +426,22 @@ function startGame(msg) {
         if (e.target.classList.contains("game-mole")) {
             molePosition = e.target.parentElement.parentElement.classList[0];
 
-            myMole.attack(molePosition);
+            myMole.attack(
+                document
+                    .querySelector(`.${molePosition} .mole-entity`)
+                    .getAttribute("data-player-id")
+            );
 
             // Flash mole red
 
-            e.target.style.filter = "brightness(0.6)";
+            e.target.style.filter = "brightness(0.3)";
 
             setTimeout(() => {
                 e.target.style.filter = "brightness(1)";
             }, 100);
-        } else {
+        } else if (e.target.classList.contains("game-container")) {
             myMole.attack();
         }
-
         let gameContainer = document.querySelector(".game-container");
         let gameContainerRect = gameContainer.getBoundingClientRect();
         // Place acid pool on click location
@@ -377,7 +489,6 @@ class Mole {
         this.position = position;
 
         this.name = getPlayer(game, playerId).name;
-        console.log(this.name);
 
         this.moveId = null;
 
@@ -444,6 +555,10 @@ class Mole {
 
         Mole.molePositions[position] = this;
 
+        document
+            .querySelector(`.${position} .mole-entity`)
+            .setAttribute("data-player-id", this.playerId);
+
         setTimeout(() => {
             Mole.toggleMole(position, false, this.name);
         }, 200);
@@ -451,6 +566,9 @@ class Mole {
 
     removePosition() {
         if (this.position) {
+            document
+                .querySelector(`.${this.position} .mole-entity`)
+                .setAttribute("data-player-id", "");
             Mole.molePositions[this.position] = null;
             this.position = null;
         }
@@ -464,6 +582,7 @@ class Mole {
 
     stopMoving() {
         clearInterval(this.moveId);
+        Mole.toggleMole(this.position, true);
     }
 
     remove() {
@@ -481,10 +600,21 @@ class PersonalMole {
 
         this.mole = document.querySelector(".personal-mole-entity");
 
+        this.lives = null;
+        this.acid = null;
+
         this.hidden = getPlayer(game, playerId).hidden;
+        this.showTime = Date.now();
+        this.hideId = null;
+
+        this.forcedShow = false;
     }
 
     hide() {
+        if (this.forcedShow) {
+            return;
+        }
+
         this.hidden = true;
 
         this.socket.emit("hide", {
@@ -511,9 +641,26 @@ class PersonalMole {
 
     toggle() {
         if (this.hidden) {
-            this.show();
+            if (this.lives > 0) {
+                this.show();
+                this.showTime = Date.now();
+                console.log("show");
+            }
         } else {
-            this.hide();
+            if (this.showTime + 1500 - Date.now() < 0) {
+                this.hide();
+                console.log("hide");
+            } else if (this.hideId !== null) {
+                clearTimeout(this.hideId);
+                this.hideId = null;
+                console.log("cancel hide");
+            } else {
+                this.hideId = setTimeout(() => {
+                    this.hide();
+                    this.hideId = null;
+                }, this.showTime + 1500 - Date.now());
+                console.log("hide in", this.showTime + 1500 - Date.now());
+            }
         }
     }
 
@@ -525,5 +672,10 @@ class PersonalMole {
                 hit: hit,
             },
         });
+    }
+
+    forceShow() {
+        this.forcedShow = true;
+        this.show();
     }
 }

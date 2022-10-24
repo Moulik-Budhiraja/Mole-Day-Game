@@ -4,6 +4,8 @@
 
 body {
     background-color: #dcf6ff;
+    height: 100vh;
+    overflow: hidden;
 }
 
 .wrapper {
@@ -18,7 +20,7 @@ body {
 
 .game-container {
     background-color: #fff;
-    height: 80vmin;
+    width: 50%;
     aspect-ratio: 10/7;
     border-radius: 1rem;
     overflow: hidden;
@@ -98,12 +100,15 @@ body {
     text-align: center;
     position: absolute;
     white-space: nowrap;
+    max-width: 125%;
     left: 50%;
     transform: translate(-50%, -120%);
     z-index: 1;
     color: #fff;
     text-shadow: 1px 1px 5px #000;
     cursor: default;
+    overflow: hidden;
+    text-overflow: ellipsis;
     
     /* Cursor Stuff*/
     -webkit-touch-callout: none; 
@@ -177,7 +182,7 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    width: calc(35vmin / 7 * 10);
+    width: 25%;
     height: 100%;
     /* background-color: rgba(0,0,0,0.2); */
 }
@@ -186,7 +191,7 @@ body {
     position: absolute;
     top: 0;
     right: 0;
-    width: calc(35vmin / 7 * 10);
+    width: 25%;
     height: 100%;
     /* background-color: rgba(0,0,0,0.2); */
 }
@@ -203,11 +208,11 @@ body {
 }
 
 .health-wrapper {
-    right: 10px;
+    right: 20px;
 }
 
 .ammo-wrapper {
-    left: 10px;
+    left: 20px;
 }
 
 .health, .ammo {
@@ -260,6 +265,8 @@ body {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    opacity: 1;
+    transition: opacity 0.2s ease-in-out;
 } 
 
 .mole-position .personal-mole-entity {
@@ -267,6 +274,11 @@ body {
     bottom: 25px;
     width:55%;
     transition: bottom 0.2s ease-in-out;
+
+}
+
+.mole-position.dead {
+    opacity: 0;
 }
 
 .personal-mole-entity.hidden {
@@ -358,6 +370,41 @@ body {
     height: 100%;
 }
 
+.leaderboard {
+    position: fixed;
+    bottom: 50%;
+    right: 5%;
+    width: 12%;
+    transform: translateY(50%);
+} 
+
+.leaderboard li {
+    font-size: 1.3rem;
+}
+
+.leaderboard li .player-name {
+    display: inline-block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 80%;
+    vertical-align: bottom;
+}
+
+.leaderboard li .player-score {
+    width: 10%;
+    float: right;
+}
+
+.leaderboard.dead {
+    left: 2%;
+    right: auto;
+    bottom: 5%;
+    transform: translateY(0%);
+    color: #fff;
+    z-index: 3;
+}
+
 .acid {
     width: 100%;
     height: 100%;
@@ -376,4 +423,136 @@ body {
 
 .acid-wrapper.fade-acid {
     opacity: 0;
+}
+
+
+
+.hud-cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    z-index: 1;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.8s ease-in-out;
+}
+
+
+.hud-cover .eliminated {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    visibility: inherit;
+    font-weight: 700;
+    color: rgb(170, 44, 44);
+    text-shadow: 1px 1px 5px #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hud-cover .eliminated h1 {
+    font-size: 6rem;
+}
+
+
+.hud-cover.dead {
+    opacity: 0.75;
+    visibility: visible;
+}
+
+.timer.dead {
+    z-index: 3;
+    color: #fff;
+}
+
+.timer.dead .icon {
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%);
+}
+
+.score.dead {
+    z-index: 3;
+    color: #fff;
+}
+
+.score.dead .icon {
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%);
+}
+
+.players-left.dead {
+    z-index: 3;
+    color: #fff;
+}
+
+.players-left.dead .icon {
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%);
+}
+
+.game-over-hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    z-index: 1;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.8s ease-in-out;
+}
+
+.game-over-hud.game-over {
+    opacity: 0.9;
+    visibility: visible;
+}
+
+.game-over-hud h1 {
+    opacity: 1;
+    z-index: 2;
+    position: absolute;
+    white-space: nowrap;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5rem;
+    color: #ff1d25;
+}
+
+.game-over-hud h3 {
+    opacity: 1;
+    z-index: 2;
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    color: #fff;
+}
+
+.leaderboard.game-over {
+    left: 50%;
+    top: 45%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    z-index: 3;
+    width: 25%;
+}
+
+.timer.game-over {
+    display: none;
+}
+
+.score.game-over {
+    display: none;
+}
+
+.players-left.game-over {
+    display: none;
 }
