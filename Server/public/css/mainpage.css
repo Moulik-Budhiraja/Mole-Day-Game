@@ -30,3 +30,7 @@ button {
     margin-top: 1rem;
 }
 
+.out-of-frame {
+    position: fixed;
+    top: 100vh;
+}
